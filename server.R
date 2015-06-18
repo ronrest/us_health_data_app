@@ -13,6 +13,16 @@ library(shiny)
 #     a <<- 45
 # And assign new values in the session using the double arrows as well. 
 
+
+#-------------------------------------------------------------------------------
+#                                              Download And Cache The Data Files
+#-------------------------------------------------------------------------------
+dataDir <- "data"
+#library("file.convenience")
+source("download_and_cache_data.R")
+download_and_cache_data(dataDir)
+
+
 #===============================================================================
 #                                                           THE SERVER BEHAVIOUR
 #===============================================================================
