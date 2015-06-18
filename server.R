@@ -14,13 +14,19 @@ library(shiny)
 # And assign new values in the session using the double arrows as well. 
 
 
-#-------------------------------------------------------------------------------
+#===============================================================================
 #                                              Download And Cache The Data Files
-#-------------------------------------------------------------------------------
+#===============================================================================
 dataDir <- "data"
 #library("file.convenience")
 source("download_and_cache_data.R")
-download_and_cache_data(dataDir)
+download_and_cache_blood_pressure_data(dataDir)
+download_and_cache_body_measures_data(dataDir)
+download_and_cache_diet_data(dataDir)
+
+
+
+
 
 
 #===============================================================================
