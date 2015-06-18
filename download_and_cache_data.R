@@ -1,7 +1,7 @@
-download_and_cache_data <- function(dataDir){
-    #===========================================================================
-    #                                              Download and Cache Data Files
-    #===========================================================================
+#===============================================================================
+#                                         DOWNLOAD AND CACHE BLOOD PRESSURE DATA
+#===============================================================================
+download_and_cache_blood_pressure_data <- function(dataDir){
     require("file.convenience")
     
     #---------------------------------------------------------------------------
@@ -27,10 +27,13 @@ download_and_cache_data <- function(dataDir){
         cache_download(blood_pressure_urls[[i]], dataDir=dataDir, 
                        localName=blood_pressure_files[i])
     } 
-    #---------------------------------------------------------------------------
-    #                                                              Body Measures
-    #---------------------------------------------------------------------------
-    # http://wwwn.cdc.gov/Nchs/Nhanes/1999-2000/BMX.htm
+}
+#===============================================================================
+#                                          DOWNLOAD AND CACHE BODY MEASURES DATA
+#===============================================================================
+download_and_cache_body_measures_data <- function(dataDir){
+    require("file.convenience")
+    # Codebook: http://wwwn.cdc.gov/Nchs/Nhanes/1999-2000/BMX.htm
     body_measures_urls = list(
         "2000" = "http://wwwn.cdc.gov/Nchs/Nhanes/1999-2000/BMX.XPT",
         "2002" = "http://wwwn.cdc.gov/Nchs/Nhanes/2001-2002/BMX_B.XPT",
@@ -49,11 +52,14 @@ download_and_cache_data <- function(dataDir){
     for (i in 1:length(body_measures_urls)){
         cache_download(body_measures_urls[[i]], dataDir=dataDir, 
                        localName=body_measures_files[i])
-    } 
-    #---------------------------------------------------------------------------
-    #                                                                       Diet
-    #---------------------------------------------------------------------------
-    # http://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/DR1TOT_C.htm
+    }
+}
+#===============================================================================
+#                                                   DOWNLOAD AND CACHE DIET DATA
+#===============================================================================
+download_and_cache_diet_data <- function(dataDir){
+    require("file.convenience")
+    # Codebook: http://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/DR1TOT_C.htm
     diet_urls = list(
         "2000" = "http://wwwn.cdc.gov/Nchs/Nhanes/1999-2000/DRXTOT.XPT",
         "2002" = "http://wwwn.cdc.gov/Nchs/Nhanes/2001-2002/DRXTOT_B.XPT",
