@@ -111,6 +111,57 @@ compressed_data <- summarise(by_year,
 
 
 
+#===============================================================================
+#                                                                  Timeline plot
+#===============================================================================
+# library(manipulate)
+# plot_mega <- function(y){
+#     plot(x=as.numeric(levels(compressed_data$year)), 
+#          y=compressed_data[,y][[1]], 
+#          type="l")    
+# }
+# 
+# manipulate(plot_mega(y), 
+#            y = picker("mean_bmi", 
+#                       "sd_bmi", 
+#                       "mean_weight", 
+#                       "mean_height", 
+#                       "mean_sys", 
+#                       "mean_dia", 
+#                       "sd_sys", 
+#                       "sd_dia",  
+#                       "mean_energy", 
+#                       "mean_protein",
+#                       "mean_fat",
+#                       "mean_cholesterol",
+#                       "mean_sodium", 
+#                       "mean_potassium",
+#                       "mean_calcium",
+#                       initial = "mean_bmi"))
+
+
+#===============================================================================
+#                                                   Overlayed Distribution plots
+#===============================================================================
+plot_distributions <- function(feature, by_year){
+    plot(density(as.numeric(merged_data[,feature]), na.rm=T), main="something here", 
+         type="n")
+    plot_dist <- function(data){
+        #plot(density(data$bmi, na.rm=T))
+        #print(head(data))
+        #print(str(as.numeric(data$bmi)))
+        color = as.numeric(data$year[1])
+        lines(density(as.numeric(data[,feature][[1]]), na.rm=T), main=data$year[1], 
+              col=color)
+        abline(v = mean(as.numeric(data[,feature][[1]]), na.rm=T), col=color)
+    }
+    
+    by_year %>%
+        do(plot = plot_dist(.))    
+}
+#plot_distributions("systolic", by_year)
+
+
 
 
 #===============================================================================
