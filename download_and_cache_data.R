@@ -1,12 +1,13 @@
 #===============================================================================
 #                                         DOWNLOAD AND CACHE BLOOD PRESSURE DATA
 #===============================================================================
+#' @description Downloads and caches the blood pressure data from the 
+#'              wwwn.cdc.gov website. 
+#' @return Returns a labelled list with the file paths to the downloaded files.
+#'         The label for each element is the year that the data file is from. 
+#===============================================================================
 download_and_cache_blood_pressure_data <- function(dataDir){
-    require("file.convenience")
-    
-    #---------------------------------------------------------------------------
-    #                                                             Blood Pressure
-    #---------------------------------------------------------------------------
+    require("file.convenience")    
     # Codebook: http://wwwn.cdc.gov/Nchs/Nhanes/2001-2002/BPX_B.htm#BPQ150A
     blood_pressure_urls = list(
         "2000" = "http://wwwn.cdc.gov/Nchs/Nhanes/1999-2000/BPX.XPT",
@@ -17,19 +18,32 @@ download_and_cache_blood_pressure_data <- function(dataDir){
         "2010" = "http://wwwn.cdc.gov/Nchs/Nhanes/2009-2010/BPX_F.XPT",
         "2012" = "http://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/BPX_G.XPT")
     
-    blood_pressure_files = c("bp_2000.xpt", "bp_2002.xpt", "bp_2004.xpt", 
-                             "bp_2006.xpt", "bp_2008.xpt", "bp_2010.xpt", 
-                             "bp_2012.xpt")
+    blood_pressure_files = list("2000" = "bp_2000.xpt", 
+                                "2002" = "bp_2002.xpt", 
+                                "2004" = "bp_2004.xpt",
+                                "2006" = "bp_2006.xpt", 
+                                "2008" = "bp_2008.xpt", 
+                                "2010" = "bp_2010.xpt", 
+                                "2012" = "bp_2012.xpt")
     
     # Downloads the data from the url the first time, then future times this 
     # script is called, it loads from the local version of the data. 
     for (i in 1:length(blood_pressure_urls)){
         cache_download(blood_pressure_urls[[i]], dataDir=dataDir, 
-                       localName=blood_pressure_files[i])
+                       localName=blood_pressure_files[[i]])
     } 
+    fullpaths = as.list(paste(dataDir, blood_pressure_files, sep="/"))
+    names(fullpaths) = names(blood_pressure_files)
+    return(fullpaths)
 }
+
 #===============================================================================
 #                                          DOWNLOAD AND CACHE BODY MEASURES DATA
+#===============================================================================
+#' @description Downloads and caches the body measures data from the 
+#'              wwwn.cdc.gov website. 
+#' @return Returns a labelled list with the file paths to the downloaded files.
+#'         The label for each element is the year that the data file is from. 
 #===============================================================================
 download_and_cache_body_measures_data <- function(dataDir){
     require("file.convenience")
@@ -43,19 +57,30 @@ download_and_cache_body_measures_data <- function(dataDir){
         "2010" = "http://wwwn.cdc.gov/Nchs/Nhanes/2009-2010/BMX_F.XPT",
         "2012" = "http://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/BMX_G.XPT")
     
-    body_measures_files = c("bm_2000.xpt", "bm_2002.xpt", "bm_2004.xpt", 
-                            "bm_2006.xpt", "bm_2008.xpt", "bm_2010.xpt", 
-                            "bm_2012.xpt")
+    body_measures_files = list("2000" = "bm_2000.xpt", 
+                               "2002" = "bm_2002.xpt", 
+                               "2004" = "bm_2004.xpt",
+                               "2006" = "bm_2006.xpt",
+                               "2008" = "bm_2008.xpt",
+                               "2010" = "bm_2010.xpt",
+                               "2012" = "bm_2012.xpt")
     
     # Downloads the data from the url the first time, then future times this 
     # script is called, it loads from the local version of the data. 
     for (i in 1:length(body_measures_urls)){
         cache_download(body_measures_urls[[i]], dataDir=dataDir, 
-                       localName=body_measures_files[i])
+                       localName=body_measures_files[[i]])
     }
+    fullpaths = as.list(paste(dataDir, body_measures_files, sep="/"))
+    names(fullpaths) = names(body_measures_files)
+    return(fullpaths)
 }
 #===============================================================================
 #                                                   DOWNLOAD AND CACHE DIET DATA
+#===============================================================================
+#' @description Downloads and caches the diet data from the wwwn.cdc.gov website
+#' @return Returns a labelled list with the file paths to the downloaded files.
+#'         The label for each element is the year that the data file is from. 
 #===============================================================================
 download_and_cache_diet_data <- function(dataDir){
     require("file.convenience")
@@ -69,14 +94,21 @@ download_and_cache_diet_data <- function(dataDir){
         "2010" = "http://wwwn.cdc.gov/Nchs/Nhanes/2009-2010/DR1TOT_F.XPT",
         "2012" = "http://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/DR1TOT_G.XPT")
     
-    diet_files = c("diet_2000.xpt","diet_2002.xpt","diet_2004.xpt", 
-                   "diet_2006.xpt", "diet_2008.xpt", "diet_2010.xpt", 
-                   "diet_2012.xpt")
+    diet_files = list("2000" = "diet_2000.xpt",
+                      "2002" = "diet_2002.xpt",
+                      "2004" = "diet_2004.xpt",
+                      "2006" = "diet_2006.xpt", 
+                      "2008" = "diet_2008.xpt", 
+                      "2010" = "diet_2010.xpt", 
+                      "2012" = "diet_2012.xpt")
     
     # Downloads the data from the url the first time, then future times this 
     # script is called, it loads from the local version of the data. 
     for (i in 1:length(diet_urls)){
         cache_download(diet_urls[[i]], dataDir=dataDir, 
-                       localName=diet_files[i])
+                       localName=diet_files[[i]])
     } 
+    fullpaths = as.list(paste(dataDir, diet_files, sep="/"))
+    names(fullpaths) = names(diet_files)
+    return(fullpaths)
 }
