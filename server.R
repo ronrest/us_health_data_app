@@ -70,10 +70,45 @@ if(!file.exists(merged_data_file)){
     message(paste("Loading the cached tidy data from", merged_data_file))
     merged_data <- readRDS(merged_data_file)
 }
-   
+
 # NA information
 #library(stat.convenience)
 #na.summary(merged_data)
+
+
+#===============================================================================
+#                                            Compress The data into Usable form
+#===============================================================================
+# Summarise the data for each useful column by averaging, and taking the standard 
+# deviation for each year. 
+by_year <- group_by(merged_data, year)
+compressed_data <- summarise(by_year, 
+                             mean_sys = mean(systolic, na.rm=T), 
+                             mean_dia = mean(diastolic, na.rm=T), 
+                             mean_bmi = mean(bmi, na.rm=T), 
+                             mean_weight = mean(weight, na.rm=T), 
+                             mean_height = mean(height, na.rm=T), 
+                             mean_energy =  mean(energy, na.rm=T), 
+                             mean_protein = mean(protein, na.rm=T),
+                             mean_fat = mean(fat_total, na.rm=T), 
+                             mean_cholesterol = mean(cholesterol, na.rm=T),
+                             mean_sodium =  mean(sodium, na.rm=T), 
+                             mean_potassium = mean(potassium, na.rm=T),
+                             mean_calcium = mean(calcium, na.rm=T),
+                             sd_sys = sd(systolic, na.rm=T), 
+                             sd_dia = sd(diastolic, na.rm=T), 
+                             sd_bmi = sd(bmi, na.rm=T),
+                             sd_weight = sd(weight, na.rm=T), 
+                             sd_height = sd(height, na.rm=T), 
+                             sd_energy =  sd(energy, na.rm=T), 
+                             sd_protein = sd(protein, na.rm=T),
+                             sd_fat = sd(fat_total, na.rm=T), 
+                             sd_cholesterol = sd(cholesterol, na.rm=T),
+                             sd_sodium =  sd(sodium, na.rm=T), 
+                             sd_potassium = sd(potassium, na.rm=T),
+                             sd_calcium = sd(calcium, na.rm=T)
+                             )
+
 
 
 
