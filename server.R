@@ -25,6 +25,13 @@ body_measures_files  <- download_and_cache_body_measures_data(dataDir)
 diet_files           <- download_and_cache_diet_data(dataDir)
 
 
+#===============================================================================
+#                                            Load the Data into Tidy Data Frames
+#===============================================================================
+source("load_data.R")
+blood_pressure <- load_blood_pressure_data(blood_pressure_files)
+body_measures  <- load_body_measures_data(body_measures_files)
+diet           <- load_diet_data(diet_files)
 
 
 #===============================================================================
