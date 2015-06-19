@@ -33,6 +33,17 @@ blood_pressure <- load_blood_pressure_data(blood_pressure_files)
 body_measures  <- load_body_measures_data(body_measures_files)
 diet           <- load_diet_data(diet_files)
 
+# Merge the data frames into a single dataframe. Each participant is identified
+# by an id, which is in each dataframe. 
+library(dplyr)
+merged_data = plyr::join_all(list(blood_pressure, body_measures, diet))
+
+head(merged_data)
+
+# NA information
+#library(stat.convenience)
+#na.summary(merged_data)
+
 
 #===============================================================================
 #                                                           THE SERVER BEHAVIOUR
