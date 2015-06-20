@@ -227,7 +227,7 @@ plot_distributions <- function(feature, by_year){
     
     # Set the plot dimensions
     plot(density(all_years_data), 
-         main=paste("Density Distribution for", plot_labels[[feature]][1], 
+         main=paste("Density Distribution (and Mean) for", plot_labels[[feature]][1], 
                     "\n(Color Coded by Year)"), 
          xlab="Year",
          ylab=NA,
