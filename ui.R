@@ -1,5 +1,6 @@
 library(shiny)
-shinyUI(pageWithSidebar(
+        
+shinyUI(fluidPage(
     headerPanel("Health of the Nation"),
     sidebarPanel(
         selectInput("feature", "Choose a Feature", 
@@ -42,8 +43,50 @@ shinyUI(pageWithSidebar(
              "<li>Potassium",
              "<li>Caffeine Consumtion")
     ),
-    mainPanel(
-        plotOutput("timelinePlot"),
-        plotOutput("densityPlot")
+    mainPanel(      
+        tabsetPanel(
+            tabPanel("Plots", 
+                     plotOutput("timelinePlot"),
+                     plotOutput("densityPlot")), 
+            tabPanel("Documentation", 
+                     h3("Documentation"),
+                     p(),
+                     HTML("This web aplication makes use of the data from the "),
+                     a(href="http://wwwn.cdc.gov/Nchs/Nhanes/Search/nhanes_continuous.aspx", 
+                       "National Health and Nutrition Examination Survey"),
+                     HTML("for the years spanning from 1999 to 2012. Every two", 
+                          "years data is released of participants from the USA",
+                          "measuring various health indicators such as blood",
+                          "pressure, weight, Body Mass Index, and daily ",
+                          "nutrient intake. This data was stitched up in order", 
+                          "to provide an interactive visual exploration of the", 
+                          "recent trends of such health indicators of the US", 
+                          "population. "),
+                     p(),
+                     HTML("Simply select the specific health measurement you",
+                          "wish to explore using the drop down menu in the",
+                          "left hand panel. Two plots will be drawn. One of",
+                          "them shows the yearly trend of that health",
+                          "indicator in the US population. It also shows a 95%",
+                          "confidence interval estimate for the true",
+                          "population mean. This allows you to visualise if", 
+                          "any changes occuring in subsequent years can be",
+                          "attributed to sampling variability alone, or", 
+                          "if those changes reflect real trends in the", 
+                          "population."),
+                     p(),
+                     HTML("The second plot draws a set of overlapping density", 
+                          "distribution plots, one for the data collected", 
+                          "during each of the two yearly cycles. This alows",
+                          "you to see how the sampled data is distributed", 
+                          "in relation to the mean."),
+                     p(),
+                     HTML("The code for this app can be viewed/downloaded/forked",
+                          "from github in the following repo: "),
+                     a(href="https://github.com/ronrest/us_health_data_app", 
+                       "https://github.com/ronrest/us_health_data_app")
+                     )
+        )
     )
 ))
+
