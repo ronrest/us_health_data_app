@@ -138,6 +138,38 @@ for (feature in column_names){
     yearly_ci_high[,feature] = feature_ci_high
 } 
 
+#===============================================================================
+#                                                                    Plot Labels
+#===============================================================================
+# A labelled list of string vectors. Each element of the list is for each 
+# feature. This element is a vector contianing two strings. 
+#  - The first one is the string to be used for the main heading in the 
+#    Timeline plot. 
+#  - The second one is the string to be used for the Y axis label in the 
+#    Timeline plot. 
+plot_labels = list("systolic" = c("Systolic Blood Pressure in the USA", 
+                                  "Systolic Blood Pressure (mm Hg)"),
+    "diastolic" = c("Diastolic Blood Pressure in the USA", 
+                    "Diastolic Blood Pressure (mm Hg)"),
+    "bmi" = c("Body Mass Index in the USA", "BMI"),
+    "weight" = c("Weight in the USA", "Weight (kg"),
+    "height" = c("Height the USA", "Height (cm)"),
+    "energy" = c("Daily Energy Intake in the USA", "Energy (kcal"),
+    "protein" = c("Daily Protein Intake in the USA", "Protein (gm)"),
+    "carbs" = c("Daily Carbohydrates Intake in the USA", 
+                "Carbohydrates (gm)"),
+    "fibre" = c("Daily Fibre Intake in the USA", "Fibre (gm)"),
+    "fat_total" = c("Daily Total Fats Intake in the USA", 
+                    "Total Fats (gm)"),
+    "fat_saturated" = c("Daily Saturated Fats Intake in the USA", 
+                        "Saturated Fats (gm)"),
+    "cholesterol" = c("Daily Cholesterol Intake in the USA", 
+                      "Cholesterol (mg)"),
+    "calcium" = c("Daily Calcium Intake in the USA", "Calcium (mg)"),
+    "sodium" = c("Daily Sodium Intake in the USA", "Sodium (mg)"),
+    "potassium" = c("Daily Potassium Intake in the USA", "Potassium (mg)"),
+    "caffeine" = c("Daily Caffeine Intake in the USA", "Caffeine (mg)"))
+
 
 #===============================================================================
 #                                                                  Timeline plot
@@ -153,10 +185,10 @@ plot_timeline <- function(feature){
     plot(x=x, 
          y= yearly_means[,feature], 
          type="o", 
-         main=paste("Mean value of", feature, "per year in the USA", 
+         main=paste("Mean", plot_labels[[feature]][1], 
                     "\n(With 95% Confidence Interval)"),
          xlab="Year", 
-         ylab=feature)
+         ylab=plot_labels[[feature]][2])
     grid(nx = NULL, ny = NULL, col = "gray", lty = "dotted",
          lwd = 1, equilogs = TRUE)
     
@@ -195,7 +227,8 @@ plot_distributions <- function(feature, by_year){
     
     # Set the plot dimensions
     plot(density(all_years_data), 
-         main=paste("Density Distribution for", feature), 
+         main=paste("Density Distribution for", plot_labels[[feature]][1], 
+                    "\n(Color Coded by Year)"), 
          xlab="Year",
          ylab=NA,
          xlim=quantile(all_years_data, c(0.01, 0.99)), # Zoom to relevant area
