@@ -1,18 +1,11 @@
 library(shiny)
 
-#===============================================================================
-#                                                               HELPER FUNCTIONS
-#===============================================================================
-# Whaatever functions, you need to calculated values, analysis, etc. 
-
-# Loose code you put here will be called only ONCE when you do runApp(), unless 
-# it is a function that gets called throughout the user intereaction. 
-
-# This means that if you want values to persist across multiple sessions/page 
-# refreshes, initialise the variables here globally eg: 
-#     a <<- 45
-# And assign new values in the session using the double arrows as well. 
-
+# Dependencies: 
+# shiny
+# Hmisc
+# dplyr
+# file.convenience
+# scales
 
 #===============================================================================
 #                                              Download And Cache The Data Files
@@ -71,102 +64,156 @@ if(!file.exists(merged_data_file)){
     merged_data <- readRDS(merged_data_file)
 }
 
-# NA information
-#library(stat.convenience)
-#na.summary(merged_data)
-
 
 #===============================================================================
-#                                            Compress The data into Usable form
+#                                                               YEARLY SUMMARIES
 #===============================================================================
-# Summarise the data for each useful column by averaging, and taking the standard 
-# deviation for each year. 
-by_year <- group_by(merged_data, year)
-compressed_data <- summarise(by_year, 
-                             mean_sys = mean(systolic, na.rm=T), 
-                             mean_dia = mean(diastolic, na.rm=T), 
-                             mean_bmi = mean(bmi, na.rm=T), 
-                             mean_weight = mean(weight, na.rm=T), 
-                             mean_height = mean(height, na.rm=T), 
-                             mean_energy =  mean(energy, na.rm=T), 
-                             mean_protein = mean(protein, na.rm=T),
-                             mean_fat = mean(fat_total, na.rm=T), 
-                             mean_cholesterol = mean(cholesterol, na.rm=T),
-                             mean_sodium =  mean(sodium, na.rm=T), 
-                             mean_potassium = mean(potassium, na.rm=T),
-                             mean_calcium = mean(calcium, na.rm=T),
-                             sd_sys = sd(systolic, na.rm=T), 
-                             sd_dia = sd(diastolic, na.rm=T), 
-                             sd_bmi = sd(bmi, na.rm=T),
-                             sd_weight = sd(weight, na.rm=T), 
-                             sd_height = sd(height, na.rm=T), 
-                             sd_energy =  sd(energy, na.rm=T), 
-                             sd_protein = sd(protein, na.rm=T),
-                             sd_fat = sd(fat_total, na.rm=T), 
-                             sd_cholesterol = sd(cholesterol, na.rm=T),
-                             sd_sodium =  sd(sodium, na.rm=T), 
-                             sd_potassium = sd(potassium, na.rm=T),
-                             sd_calcium = sd(calcium, na.rm=T)
-                             )
+by_year <- split(merged_data, merged_data$year)
+excluded_columns = c("id", "year")
+column_names = names(merged_data)[-which(names(merged_data) %in% excluded_columns)]
 
+#-------------------------------------------------------------------------------
+#                                              Initialise Yearly Means Dataframe
+#-------------------------------------------------------------------------------
+# A dataframe is created which will store a summary of the mean values for each 
+# feature in a particular year. Each feature is a column of this data frame. 
+# Each row represents a different year. 
+yearly_means <- matrix(NA,nrow=length(by_year),ncol=length(column_names))
+yearly_means <- as.data.frame(yearly_means)
+names(yearly_means) <- column_names
+rownames(yearly_means) <- names(by_year)
+
+#-------------------------------------------------------------------------------
+#                               Initialise Yearly Confidence Intervals Dataframe
+#-------------------------------------------------------------------------------
+# Two dataframes are created. Each will store a summary for either the upper 
+# or lower confidence interval for the estimate of the mean for a particular 
+# feature given a particular year. Each feature is a column of this data frame. 
+# Each row represents a different year. 
+confidence = 0.95                       # 95% confidence interval is used
+z_interval = qnorm(confidence/2 + 0.5)  # Z value for confidence interval
+
+yearly_ci_low <- yearly_means
+yearly_ci_high <- yearly_means
+
+#-------------------------------------------------------------------------------
+#                                           Populate Yearly Summaries Dataframes
+#-------------------------------------------------------------------------------
+# Actually calculate the means and confidence intervals for each feature, for 
+# each year. 
+for (feature in column_names){
+    feature_means = c()   # temporary vector stores yearly means for a feature
+    feature_ci_low = c()  # yearly lower confidence interval for a feature
+    feature_ci_high = c() # yearly upper confidence interval for a feature
+    
+    # For each year, calculate the means and confidence intervals for 
+    # the current feature. 
+    for (year in names(by_year)){
+        # Extract the data for the feature, removing missing values
+        feature_data = by_year[[year]][,feature]
+        feature_data = feature_data[complete.cases(feature_data)]
+        
+        #----------------------------------------------------------
+        #                                                     Means
+        #----------------------------------------------------------
+        mean = mean(feature_data, na.rm=T)
+        feature_means = c(feature_means, mean)
+        
+        #----------------------------------------------------------
+        #                                       Confidence Interval
+        #----------------------------------------------------------
+        sd = sd(feature_data, na.rm=T)  # Standard Deviation
+        n = length(feature_data)        # Number of items
+        se = sd / sqrt(n)               # Standard Error
+        ci = mean + c(-1, 1) * z_interval * se # Confidence Interval
+        
+        feature_ci_low = c(feature_ci_low, ci[1])
+        feature_ci_high = c(feature_ci_high, ci[2])
+    }
+    #----------------------------------------------------------------
+    #           Append the results to the relevant summary dataframes
+    #----------------------------------------------------------------
+    yearly_means[,feature] = feature_means
+    yearly_ci_low[,feature] = feature_ci_low
+    yearly_ci_high[,feature] = feature_ci_high
+} 
 
 
 #===============================================================================
 #                                                                  Timeline plot
 #===============================================================================
-# library(manipulate)
-# plot_mega <- function(y){
-#     plot(x=as.numeric(levels(compressed_data$year)), 
-#          y=compressed_data[,y][[1]], 
-#          type="l")    
-# }
-# 
-# manipulate(plot_mega(y), 
-#            y = picker("mean_bmi", 
-#                       "sd_bmi", 
-#                       "mean_weight", 
-#                       "mean_height", 
-#                       "mean_sys", 
-#                       "mean_dia", 
-#                       "sd_sys", 
-#                       "sd_dia",  
-#                       "mean_energy", 
-#                       "mean_protein",
-#                       "mean_fat",
-#                       "mean_cholesterol",
-#                       "mean_sodium", 
-#                       "mean_potassium",
-#                       "mean_calcium",
-#                       initial = "mean_bmi"))
-
-
-#===============================================================================
-#                                                   Overlayed Distribution plots
-#===============================================================================
-plot_distributions <- function(feature, by_year){
-    plot(density(as.numeric(merged_data[,feature]), na.rm=T), main="something here", 
-         type="n")
-    plot_dist <- function(data){
-        #plot(density(data$bmi, na.rm=T))
-        #print(head(data))
-        #print(str(as.numeric(data$bmi)))
-        color = as.numeric(data$year[1])
-        lines(density(as.numeric(data[,feature][[1]]), na.rm=T), main=data$year[1], 
-              col=color)
-        abline(v = mean(as.numeric(data[,feature][[1]]), na.rm=T), col=color)
-    }
+# Plot a timeline plot for a specified feature, with a shaded confidence 
+# interval for the mean. 
+plot_timeline <- function(feature){
+    x = as.numeric(rownames(yearly_means))
     
-    by_year %>%
-        do(plot = plot_dist(.))    
+    #-------------------------------------------------------------------
+    #                                                Initialise the Plot
+    #-------------------------------------------------------------------
+    plot(x=x, 
+         y= yearly_means[,feature], 
+         type="o", 
+         xlab="Year", 
+         ylab=feature)
+    grid(nx = NULL, ny = NULL, col = "gray", lty = "dotted",
+         lwd = 1, equilogs = TRUE)
+    
+    #-------------------------------------------------------------------
+    #                                Plot the Shaded Confidence Interval
+    #-------------------------------------------------------------------
+    poly_x = c(x, rev(x))
+    poly_y = c(yearly_ci_low[,feature], rev(yearly_ci_high[,feature]))
+    polygon(poly_x,poly_y, col=scales::alpha("orange", 0.4))
+    
+    #-------------------------------------------------------------------
+    #                                       Plot the Means Per Year Line
+    #-------------------------------------------------------------------
+    lines(x=x, 
+         y= yearly_means[,feature], 
+         type="b", 
+         lwd=2,
+         col="blue")
 }
-#plot_distributions("systolic", by_year)
-
-
-
 
 #===============================================================================
+#                                           Overlayed Density Distribution Plots
+#===============================================================================
+# Create Density Distribution Plots for each year, and overlay them on top of 
+# each other, with each one plotted in a different color. 
+plot_distributions <- function(feature, by_year){
+    #-------------------------------------------------------------------
+    #                                                    Initialise Plot
+    #-------------------------------------------------------------------
+    color = (as.numeric(names(by_year)) - 1998)/2 # Color by order of year
+    
+    # Tidy the Data
+    all_years_data = merged_data[,feature]
+    all_years_data = all_years_data[complete.cases(all_years_data)]
+    
+    # Set the plot dimensions
+    plot(density(all_years_data), 
+         main=paste("Density Distribution for", feature), 
+         xlab="Year",
+         ylab=NA,
+         xlim=quantile(all_years_data, c(0.01, 0.99)), # Zoom to relevant area
+         type="n")
+    
+    #-------------------------------------------------------------------
+    #                                             Draw each Density Plot
+    #-------------------------------------------------------------------
+    for (i in 1:length(by_year)){
+        yearly_data = by_year[[i]][,feature]
+        lines(density(yearly_data, na.rm=T), col=color[i])
+        abline(v = mean(yearly_data, na.rm=T), col=color[i])
+    }
+    legend("topright", pch=19, 
+           col=color, legend=names(by_year))
+}
+
+
+################################################################################
 #                                                           THE SERVER BEHAVIOUR
-#===============================================================================
+################################################################################
 shinyServer(
     function(input, output) {
         #something here
@@ -175,5 +222,14 @@ shinyServer(
         
         # COde in eractive functions get called repeatedly as needed when values
         # are updated. 
+        
+        output$timelinePlot <- renderPlot({
+            plot_timeline(input$feature)
+        }) 
+        
+        output$densityPlot <- renderPlot({
+            plot_distributions(input$feature, by_year)
+        })
+        
     }
 )
