@@ -1,11 +1,19 @@
+#===============================================================================
+#                                                                   Dependencies
+#===============================================================================
+
+#Requires file.convenience
+#install.packages("devtools")
+#devtools::install_github("ronrest/convenience_functions_R/file.convenience")
+
+# install.packages("shiny")
+# install.packages("Hmisc")
+# install.packages("dplyr")
+# install.packages("file.convenience")
+# install.packages("scales")
+
 library(shiny)
 
-# Dependencies: 
-# shiny
-# Hmisc
-# dplyr
-# file.convenience
-# scales
 
 #===============================================================================
 #                                              Download And Cache The Data Files
