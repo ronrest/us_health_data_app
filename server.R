@@ -153,6 +153,8 @@ plot_timeline <- function(feature){
     plot(x=x, 
          y= yearly_means[,feature], 
          type="o", 
+         main=paste("Mean value of", feature, "per year in the USA", 
+                    "\n(With 95% Confidence Interval)"),
          xlab="Year", 
          ylab=feature)
     grid(nx = NULL, ny = NULL, col = "gray", lty = "dotted",
@@ -163,7 +165,7 @@ plot_timeline <- function(feature){
     #-------------------------------------------------------------------
     poly_x = c(x, rev(x))
     poly_y = c(yearly_ci_low[,feature], rev(yearly_ci_high[,feature]))
-    polygon(poly_x,poly_y, col=scales::alpha("orange", 0.4))
+    polygon(poly_x,poly_y, col=scales::alpha("#FFCC00", 0.6), border=0)
     
     #-------------------------------------------------------------------
     #                                       Plot the Means Per Year Line
@@ -172,7 +174,8 @@ plot_timeline <- function(feature){
          y= yearly_means[,feature], 
          type="b", 
          lwd=2,
-         col="blue")
+         col="#0066FF", 
+         pch=19)
 }
 
 #===============================================================================
