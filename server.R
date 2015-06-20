@@ -233,6 +233,8 @@ plot_distributions <- function(feature, by_year){
          ylab=NA,
          xlim=quantile(all_years_data, c(0.01, 0.99)), # Zoom to relevant area
          type="n")
+    grid(nx = NULL, ny = NULL, col = "gray", lty = "dotted",
+         lwd = 1, equilogs = TRUE)
     
     #-------------------------------------------------------------------
     #                                             Draw each Density Plot
