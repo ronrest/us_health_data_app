@@ -8,28 +8,26 @@
 
 library(shiny)
 
-
-#===============================================================================
-#                                              Download And Cache The Data Files
-#===============================================================================
 dataDir <- "data"
-#library("file.convenience")
-source("download_and_cache_data.R")
-blood_pressure_files <- download_and_cache_blood_pressure_data(dataDir)
-body_measures_files  <- download_and_cache_body_measures_data(dataDir)
-diet_files           <- download_and_cache_diet_data(dataDir)
-
-
-#===============================================================================
-#                                            Load the Data into Tidy Data Frames
-#===============================================================================
-# The first time this is run on a computer, it will load the tidy data from 
-# all of the separated files and merge them together. It then caches the tidy 
-# data in an rds file. Subsequent calls to this script simply load up the cached
-# version of the tidy data to save computation time. 
-
 merged_data_file = paste(dataDir, "merged_data.rds", sep="/")
 if(!file.exists(merged_data_file)){
+    #===========================================================================
+    #                                          Download And Cache The Data Files
+    #===========================================================================
+    source("download_and_cache_data.R")
+    blood_pressure_files <- download_and_cache_blood_pressure_data(dataDir)
+    body_measures_files  <- download_and_cache_body_measures_data(dataDir)
+    diet_files           <- download_and_cache_diet_data(dataDir)
+
+
+    #===========================================================================
+    #                                        Load the Data into Tidy Data Frames
+    #===========================================================================
+    # The first time this is run on a computer, it will load the tidy data from 
+    # all of the separated files and merge them together. It then caches the tidy 
+    # data in an rds file. Subsequent calls to this script simply load up the cached
+    # version of the tidy data to save computation time. 
+
     #---------------------------------------------------------------------------
     #                            Load Data from each file into three data frames
     #---------------------------------------------------------------------------
@@ -65,7 +63,6 @@ if(!file.exists(merged_data_file)){
     message(paste("Loading the cached tidy data from", merged_data_file))
     merged_data <- readRDS(merged_data_file)
 }
-
 
 #===============================================================================
 #                                                               YEARLY SUMMARIES
