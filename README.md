@@ -1,11 +1,3 @@
----
-output:
-  html_document:
-    theme: readable    
----
-
-    
-
 Health of the Nation App
 ===============================================================================
 
